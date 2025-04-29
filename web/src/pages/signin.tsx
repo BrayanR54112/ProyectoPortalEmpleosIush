@@ -1,9 +1,5 @@
 import React from 'react';
-import IconButton from '@mui/material/IconButton';
-import { styled } from '@mui/material/styles';
-import { IconButtonProps } from '@mui/material/IconButton';
 import { useNavigate } from 'react-router-dom';
-//Si no se usan estas importaciones recuerden borrarlas antes de subirlas al github
 
 export default function Signin() {
   const navigate = useNavigate();
@@ -13,6 +9,7 @@ export default function Signin() {
     // Aquí luego pondrás la lógica con el backend
     navigate('/homepage');
   };
+  
   const navigateToForgotPassword = () => {
     navigate('/forgot-password');
   };
@@ -35,13 +32,15 @@ export default function Signin() {
         </div>
       </div>
 
-  
       <div className='w-1/2 h-full bg-gray-900 flex items-center justify-center px-16'>
         <div className='max-w-md w-full'>
           <section className="space-y-6">
             <div className="text-center">
-              <h1 className="text-3xl font-bold text-white mb-2">Iniciar Sesión</h1>
-              <p className="text-gray-400">Comienza nuestra aventura juntos</p>
+              <h1 className="text-4xl font-extrabold text-white mb-2">
+                <span className="block text-indigo-500">Portal de Empleos IUSH</span>
+                <span className="block text-white">Iniciar Sesión</span>
+              </h1>
+              <p className="text-gray-400 text-lg">Comienza nuestra aventura juntos</p>
             </div>
 
             <form className="space-y-4" onSubmit={handleLogin}>
@@ -58,7 +57,8 @@ export default function Signin() {
 
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-1">
-Contraseña                </label>
+                  Contraseña
+                </label>
                 <input
                   type="password"
                   id="password"
@@ -75,7 +75,7 @@ Contraseña                </label>
             </form>
 
             <div className="text-center text-sm text-gray-400">
-            <a
+              <a
                 href="#"
                 className="hover:text-indigo-500"
                 onClick={navigateToForgotPassword} 
