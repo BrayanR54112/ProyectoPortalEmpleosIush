@@ -1,29 +1,70 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const Descripcion = () => {
+type Carrera =
+  | 'Ingeniería de Sistemas'
+  | 'Contaduría'
+  | 'Administración de Empresas'
+  | 'Derecho';
+
+const ofertas: Record<Carrera, string[]> = {
+  'Ingeniería de Sistemas': [
+    'Desarrollador Frontend - TechCompany',
+    'Practicante QA - StartupX',
+  ],
+  'Contaduría': [
+    'Asistente contable - Firmax',
+    'Pasante en auditoría - Contadores Unidos',
+  ],
+  'Administración de Empresas': [
+    'Analista junior - Compañía Z',
+    'Practicante en logística - Transporte S.A.',
+  ],
+  'Derecho': [
+    'Pasante jurídico - Bufete López',
+    'Asesor legal junior - JurisConsultores',
+  ],
+};
+
+const Homepage = () => {
+  const [selectedCareer, setSelectedCareer] = useState<Carrera>('Ingeniería de Sistemas');
+
+  const carreras = Object.keys(ofertas) as Carrera[];
+
   return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold mb-4">¿Qué es nuestro portal?</h1>
-      <p className="mb-4">
-        Realizamos un portal de ofertas laborales para estudiantes, donde aparte de poder
-        encontrar oportunidades para desarrollar habilidades en sus respectivas carreras, nuestra
-        plataforma surge como un punto de encuentro entre talento y oportunidades.
-      </p>
+    <div className="min-h-screen bg-gray-100 p-10">
+      <div className="bg-white p-8 rounded shadow-lg max-w-5xl mx-auto">
+        <h1 className="text-3xl font-bold text-indigo-600 mb-4">Bienvenido al portal de empleos</h1>
+        <p className="text-gray-700 mb-6">
+          Encuentra oportunidades laborales o realiza trueques de habilidades con estudiantes y egresados.
+        </p>
 
-      <h2 className="text-2xl font-semibold mb-2">¿Qué ofrecemos?</h2>
-      <ul className="list-disc list-inside mb-4">
-        <li>Explorar ofertas laborales de empresas locales.</li>
-        <li>Conectar con talento local: profesionales, emprendedores y freelancers.</li>
-        <li>Intercambiar conocimientos y servicios mediante un sistema de trueque de habilidades.</li>
-        <li>Crear perfiles personalizados para mostrar experiencia, habilidades y proyectos.</li>
-      </ul>
+        <div className="flex flex-wrap gap-3 mb-6">
+          {carreras.map((carrera) => (
+            <button
+              key={carrera}
+              onClick={() => setSelectedCareer(carrera)}
+              className={`px-4 py-2 rounded-md font-semibold ${
+                selectedCareer === carrera
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-300 hover:bg-indigo-300 text-gray-800'
+              }`}
+            >
+              {carrera}
+            </button>
+          ))}
+        </div>
 
-      <p>
-        Nuestra plataforma está diseñada para ser intuitiva y moderna, accesible para todos los niveles
-        de conocimiento digital.
-      </p>
+        <div>
+          <h2 className="text-xl font-semibold text-indigo-500 mb-3">Ofertas para {selectedCareer}</h2>
+          <ul className="list-disc pl-5 text-gray-800">
+            {ofertas[selectedCareer].map((oferta, index) => (
+              <li key={index} className="mb-2">{oferta}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Descripcion;
+export default Homepage;
