@@ -50,14 +50,20 @@ const Navbar = () => {
 
 const Homepage = () => {
   const [selectedCareer, setSelectedCareer] = useState<Carrera>('Ingeniería de Sistemas');
-
   const carreras = Object.keys(ofertas) as Carrera[];
 
   return (
-    <div className="min-h-screen bg-gray-100 p-10">
-      <Navbar /> {/* Aquí llamamos al Navbar */}
+    <div className="min-h-screen bg-gray-100 p-0">
+      <Navbar />
 
-      <div className="bg-white p-8 rounded shadow-lg max-w-5xl mx-auto mt-8">
+      {/* 🔹 Banner sin imagen */}
+      <div className="w-full bg-indigo-700 text-white py-16 flex flex-col items-center text-center">
+        <h2 className="text-4xl font-bold mb-2">Conecta con tu futuro</h2>
+        <p className="text-lg">Encuentra prácticas, empleos y haz networking con estudiantes como tú.</p>
+      </div>
+
+      {/* 🔹 Contenido principal */}
+      <div className="bg-white p-8 rounded shadow-lg max-w-5xl mx-auto mt-10">
         <h1 className="text-3xl font-bold text-indigo-600 mb-4">Bienvenido al portal de empleos</h1>
         <p className="text-gray-700 mb-6">
           Encuentra oportunidades laborales o realiza trueques de habilidades con estudiantes y egresados.
@@ -86,7 +92,6 @@ const Homepage = () => {
           <ul className="list-disc pl-5 text-gray-800 space-y-3">
             {ofertas[selectedCareer].map((oferta, index) => (
               <li key={index} className="flex items-center gap-2">
-                {/* Icono para cada oferta */}
                 <span className="text-indigo-600">💼</span>
                 {oferta}
               </li>
