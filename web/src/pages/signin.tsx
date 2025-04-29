@@ -2,9 +2,18 @@ import React from 'react';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import { IconButtonProps } from '@mui/material/IconButton';
+import { useNavigate } from 'react-router-dom';
 //Si no se usan estas importaciones recuerden borrarlas antes de subirlas al github
 
 export default function Signin() {
+  const navigate = useNavigate();
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Aquí luego pondrás la lógica con el backend
+    navigate('/homepage');
+  };
+
   return (
     <div className='w-full h-screen flex'>
       <div className='relative w-1/2 h-full'>
@@ -32,7 +41,7 @@ export default function Signin() {
               <p className="text-gray-400">Comienza nuestra aventura juntos</p>
             </div>
 
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleLogin}>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">
                   Correo
@@ -54,7 +63,10 @@ Contraseña                </label>
                 />
               </div>
 
-              <button className="w-full bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 transition-colors duration-200">
+              <button
+                type="submit"
+                className="w-full bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 transition-colors duration-200"
+              >
                 Iniciar Sesión
               </button>
             </form>

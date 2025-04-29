@@ -8,17 +8,11 @@ import Descripcion from './pages/homepage'
 export default function App() 
 {
    return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-blue-600 p-4 text-white flex gap-4">
-        <Link to="/">Inicio</Link>
-        <Link to="/descripcion">Descripción del Trabajo</Link>
-      </nav>
-
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/descripcion" element={<Descripcion />} />
+        <Route path="/homepage" element={<Descripcion />} />
       </Routes>
-    </div>
+    
   )
 }
 
