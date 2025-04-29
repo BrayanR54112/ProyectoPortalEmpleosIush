@@ -13,6 +13,9 @@ export default function Signin() {
     // Aquí luego pondrás la lógica con el backend
     navigate('/homepage');
   };
+  const navigateToForgotPassword = () => {
+    navigate('/forgot-password');
+  };
 
   return (
     <div className='w-full h-screen flex'>
@@ -72,7 +75,13 @@ Contraseña                </label>
             </form>
 
             <div className="text-center text-sm text-gray-400">
-              <a href="#" className="hover:text-indigo-500">¿Olvidaste tu contraseña?</a>
+            <a
+                href="#"
+                className="hover:text-indigo-500"
+                onClick={navigateToForgotPassword} 
+              >
+                ¿Olvidaste tu contraseña?
+              </a>
             </div>
           </section>
         </div>

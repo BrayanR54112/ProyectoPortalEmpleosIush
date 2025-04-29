@@ -6,6 +6,7 @@ import Home from './pages/signin'
 import Descripcion from './pages/homepage'
 import About from './pages/About';
 import Contact from './pages/Contact';
+import ForgotPassword from './pages/ForgotPassword';
 import Navbar from './components/Navbar';
  
 export default function App() 
@@ -16,6 +17,7 @@ export default function App()
         <Route path="/homepage" element={<Descripcion />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
     
   )
