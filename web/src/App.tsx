@@ -4,6 +4,9 @@ import Signin from './pages/signin'
 import { Routes, Route, Link } from 'react-router-dom'
 import Home from './pages/signin'
 import Descripcion from './pages/homepage'
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Navbar from './components/Navbar';
  
 export default function App() 
 {
@@ -11,6 +14,8 @@ export default function App()
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/homepage" element={<Descripcion />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     
   )
