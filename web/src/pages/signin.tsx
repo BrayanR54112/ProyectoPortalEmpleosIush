@@ -12,22 +12,24 @@ export default function Signin() {
     e.preventDefault();
 
     try {
-      // 👉 Cambia la URL si tienes un endpoint real de login
-    const response = await axios.post('http://localhost:3306/api/login', {
+      const response = await axios.post('http://localhost:3000/api/login', {
+        email,
+        password,
+      });
 
-      email,
-      password,
-  });
-
-  console.log('Respuesta del backend:', response.data);
+      console.log('Respuesta del backend:', response.data);
       navigate('/homepage');
     } catch (error: any) {
-      alert(`Error al iniciar sesión o registrarse: ${error.response?.data?.error || error.message}`);
+      alert(`Error al iniciar sesión: ${error.response?.data?.error || error.message}`);
     }
   };
 
   const navigateToForgotPassword = () => {
     navigate('/forgot-password');
+  };
+
+  const navigateToRegister = () => {
+    navigate('/register');
   };
 
   return (
@@ -62,7 +64,7 @@ export default function Signin() {
             <form className="space-y-4" onSubmit={handleLogin}>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">
-                  Correo
+                  Correo institucional
                 </label>
                 <input
                   type="email"
@@ -93,6 +95,15 @@ export default function Signin() {
                 className="w-full bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 transition-colors duration-200"
               >
                 Iniciar Sesión
+              </button>
+
+              {/* Botón para registrarse */}
+              <button
+                type="button"
+                onClick={navigateToRegister}
+                className="w-full bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition-colors duration-200 mt-2"
+              >
+                Registrarme
               </button>
             </form>
 

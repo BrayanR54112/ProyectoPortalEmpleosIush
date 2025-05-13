@@ -8,6 +8,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import ForgotPassword from './pages/ForgotPassword';
 import DetalleOferta from './components/DetalleOferta';
+import Register from './pages/Register';
 import Navbar from './components/Navbar';
  
 export default function App() 
@@ -20,6 +21,7 @@ export default function App()
         <Route path="/contact" element={<Contact />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/detalle-oferta/:id" element={<DetalleOferta />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     
   )
