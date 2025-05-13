@@ -1,17 +1,37 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import React, { useState } from 'react';
 
 export default function Signin() {
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aquí luego pondrás la lógica con el backend
-    navigate('/homepage');
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/login', {
+        email,
+        password,
+      });
+      localStorage.setItem('token', response.data.token);
+      //Guardar datos del usuario
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      console.log('Respuesta del backend:', response.data);
+      navigate('/homepage');
+    } catch (error: any) {
+      alert(`Error al iniciar sesión: ${error.response?.data?.error || error.message}`);
+    }
   };
-  
+
   const navigateToForgotPassword = () => {
     navigate('/forgot-password');
+  };
+
+  const navigateToRegister = () => {
+    navigate('/register');
   };
 
   return (
@@ -46,11 +66,14 @@ export default function Signin() {
             <form className="space-y-4" onSubmit={handleLogin}>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">
-                  Correo
+                  Correo institucional
                 </label>
                 <input
                   type="email"
                   id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                   className="w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-indigo-500 focus:bg-gray-900 focus:ring-2 focus:ring-indigo-900 text-base outline-none text-gray-100 py-2 px-3 transition-colors duration-100"
                 />
               </div>
@@ -62,6 +85,9 @@ export default function Signin() {
                 <input
                   type="password"
                   id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
                   className="w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-indigo-500 focus:bg-gray-900 focus:ring-2 focus:ring-indigo-900 text-base outline-none text-gray-100 py-2 px-3 transition-colors duration-100"
                 />
               </div>
@@ -71,6 +97,15 @@ export default function Signin() {
                 className="w-full bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 transition-colors duration-200"
               >
                 Iniciar Sesión
+              </button>
+
+              {/* Botón para registrarse */}
+              <button
+                type="button"
+                onClick={navigateToRegister}
+                className="w-full bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition-colors duration-200 mt-2"
+              >
+                Registrarme
               </button>
             </form>
 
