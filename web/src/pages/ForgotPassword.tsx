@@ -6,7 +6,7 @@ const ForgotPassword = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Aquí puedes agregar la lógica para enviar la solicitud al backend.
+    //revisar backend
     setMessage('Te hemos enviado un correo para restablecer tu contraseña.');
   };
 
