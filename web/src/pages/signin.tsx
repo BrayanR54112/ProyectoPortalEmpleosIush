@@ -1,15 +1,31 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import React, { useState } from 'react';
 
 export default function Signin() {
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aquí luego pondrás la lógica con el backend
-    navigate('/homepage');
+
+    try {
+      // 👉 Cambia la URL si tienes un endpoint real de login
+    const response = await axios.post('http://localhost:3000/api/login', {
+
+      email,
+      password,
+  });
+
+  console.log('Respuesta del backend:', response.data);
+      navigate('/homepage');
+    } catch (error: any) {
+      alert(`Error al iniciar sesión o registrarse: ${error.response?.data?.error || error.message}`);
+    }
   };
-  
+
   const navigateToForgotPassword = () => {
     navigate('/forgot-password');
   };
@@ -51,6 +67,9 @@ export default function Signin() {
                 <input
                   type="email"
                   id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                   className="w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-indigo-500 focus:bg-gray-900 focus:ring-2 focus:ring-indigo-900 text-base outline-none text-gray-100 py-2 px-3 transition-colors duration-100"
                 />
               </div>
@@ -62,6 +81,9 @@ export default function Signin() {
                 <input
                   type="password"
                   id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
                   className="w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-indigo-500 focus:bg-gray-900 focus:ring-2 focus:ring-indigo-900 text-base outline-none text-gray-100 py-2 px-3 transition-colors duration-100"
                 />
               </div>
