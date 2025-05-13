@@ -19,15 +19,17 @@ type Postulacion = {
 };
 
 const Navbar = () => (
-  <nav className="bg-indigo-600 p-4 shadow-md">
+  <nav className="bg-indigo-600 p-4 shadow-md" role="navigation">
     <div className="max-w-7xl mx-auto flex justify-between items-center">
       <div className="flex items-center">
-        <Link to="/" className="text-white font-bold text-2xl font-poppins">Portal de Empleos</Link>
+        <Link to="/" className="text-white font-bold text-2xl font-poppins" aria-label="Ir a la página de inicio">
+          Portal de Empleos
+        </Link>
       </div>
       <div className="hidden md:flex space-x-6">
-        <Link to="/" className="text-white hover:text-indigo-200">Inicio</Link>
-        <Link to="/about" className="text-white hover:text-indigo-200">Sobre Nosotros</Link>
-        <Link to="/contact" className="text-white hover:text-indigo-200">Contacto</Link>
+        <Link to="/" className="text-white hover:text-indigo-200" aria-label="Ir a la página de inicio">Inicio</Link>
+        <Link to="/about" className="text-white hover:text-indigo-200" aria-label="Ir a la página de sobre nosotros">Sobre Nosotros</Link>
+        <Link to="/contact" className="text-white hover:text-indigo-200" aria-label="Ir a la página de contacto">Contacto</Link>
       </div>
     </div>
   </nav>
@@ -46,6 +48,7 @@ const Homepage = () => {
     offerId: 0,
   });
   const [showPostulationForm, setShowPostulationForm] = useState(false);
+  const [loading, setLoading] = useState(false); // Indicador de carga
 
   const carreras = ['Ingeniería de Sistemas', 'Contaduría', 'Administración de Empresas', 'Derecho'];
 
@@ -65,6 +68,7 @@ const Homepage = () => {
   // Crear una nueva oferta
   const handleCrearOferta = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);  // Mostrar indicador de carga
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
@@ -80,7 +84,6 @@ const Homepage = () => {
       setTitle('');
       setDescription('');
       setCareer('Ingeniería de Sistemas');
-      // Actualizar ofertas después de crear una nueva
       setOfertas((prev) => [...prev, response.data.offer]);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -89,12 +92,15 @@ const Homepage = () => {
         console.error('Error desconocido:', error);
         alert('Error desconocido');
       }
+    } finally {
+      setLoading(false); // Ocultar indicador de carga
     }
   };
 
   // Manejar la postulación
   const handlePostularse = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);  // Mostrar indicador de carga
     try {
       const formData = new FormData();
       formData.append('name', postulacion.name);
@@ -115,6 +121,8 @@ const Homepage = () => {
         console.error('Error desconocido:', error);
         alert('Error desconocido');
       }
+    } finally {
+      setLoading(false); // Ocultar indicador de carga
     }
   };
 
@@ -139,6 +147,7 @@ const Homepage = () => {
                   ? 'bg-indigo-600 text-white'
                   : 'bg-gray-300 hover:bg-indigo-300 text-gray-800'
               }`}
+              aria-label={`Seleccionar carrera: ${carrera}`}
             >
               {carrera}
             </button>
@@ -159,6 +168,7 @@ const Homepage = () => {
                     setShowPostulationForm(true);
                   }}
                   className="bg-indigo-600 text-white px-4 py-2 rounded mt-2"
+                  aria-label={`Postularse a la oferta ${oferta.title}`}
                 >
                   Postularse
                 </button>
@@ -178,6 +188,8 @@ const Homepage = () => {
             onChange={(e) => setTitle(e.target.value)}
             className="w-full p-2 border rounded"
             required
+            tabIndex={0}
+            aria-label="Título de la oferta"
           />
           <textarea
             placeholder="Descripción"
@@ -185,12 +197,16 @@ const Homepage = () => {
             onChange={(e) => setDescription(e.target.value)}
             className="w-full p-2 border rounded"
             required
+            tabIndex={0}
+            aria-label="Descripción de la oferta"
           />
           <select
             value={career}
             onChange={(e) => setCareer(e.target.value as Carrera)}
             className="w-full p-2 border rounded"
             required
+            tabIndex={0}
+            aria-label="Selecciona la carrera"
           >
             {carreras.map((c) => (
               <option key={c} value={c}>{c}</option>
@@ -199,40 +215,14 @@ const Homepage = () => {
           <button
             type="submit"
             className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+            aria-label="Publicar oferta"
           >
             Publicar oferta
           </button>
         </form>
       </div>
 
-      {/* Sección de Preguntas Frecuentes */}
-      <div className="bg-white p-8 mt-8 rounded shadow-lg max-w-5xl mx-auto">
-        <h2 className="text-2xl font-semibold text-indigo-600 mb-4 text-center">Preguntas Frecuentes 🤔</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="border p-4 rounded-lg">
-            <strong>¿Cómo postularme a una oferta?</strong>
-            <p>Simplemente selecciona la oferta que te interesa y llena el formulario de postulación.</p>
-          </div>
-          <div className="border p-4 rounded-lg">
-            <strong>¿Cómo crear una oferta?</strong>
-            <p>Puedes crear ofertas si estás registrado como empleador, solo necesitas llenar el formulario.</p>
-          </div>
-          <div className="border p-4 rounded-lg">
-            <strong>¿Es necesario tener un CV para postularme?</strong>
-            <p>Sí, es recomendable subir tu CV para que los empleadores puedan evaluar tu perfil.</p>
-          </div>
-          <div className="border p-4 rounded-lg">
-            <strong>¿Puedo postularme a varias ofertas al mismo tiempo?</strong>
-            <p>Sí, puedes postularte a todas las ofertas que te interesen sin ningún problema.</p>
-          </div>
-          <div className="border p-4 rounded-lg">
-            <strong>¿Cómo me contactarán los empleadores?</strong>
-            <p>Los empleadores te contactarán directamente a tu correo electrónico o número de teléfono.</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Formulario para postularse */}
+      {/* Formulario de Postulación */}
       {showPostulationForm && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg transform scale-95 transition-transform duration-500 ease-in-out hover:scale-100 max-w-md w-full">
@@ -245,6 +235,8 @@ const Homepage = () => {
                 onChange={(e) => setPostulacion({ ...postulacion, name: e.target.value })}
                 className="w-full p-2 border rounded"
                 required
+                tabIndex={0}
+                aria-label="Nombre del postulante"
               />
               <input
                 type="email"
@@ -253,15 +245,19 @@ const Homepage = () => {
                 onChange={(e) => setPostulacion({ ...postulacion, email: e.target.value })}
                 className="w-full p-2 border rounded"
                 required
+                tabIndex={0}
+                aria-label="Correo electrónico del postulante"
               />
               <input
                 type="file"
                 onChange={(e) => setPostulacion({ ...postulacion, cv: e.target.files ? e.target.files[0] : null })}
                 className="w-full p-2 border rounded"
+                aria-label="Adjuntar CV"
               />
               <button
                 type="submit"
                 className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+                aria-label="Enviar postulación"
               >
                 Postularse
               </button>
@@ -269,6 +265,7 @@ const Homepage = () => {
                 type="button"
                 onClick={() => setShowPostulationForm(false)}
                 className="bg-red-600 text-white px-4 py-2 rounded mt-2 hover:bg-red-700 transition"
+                aria-label="Cerrar formulario de postulación"
               >
                 Atrás
               </button>
