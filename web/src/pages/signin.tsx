@@ -16,7 +16,9 @@ export default function Signin() {
         email,
         password,
       });
-
+      localStorage.setItem('token', response.data.token);
+      //Guardar datos del usuario
+      localStorage.setItem('user', JSON.stringify(response.data.user));
       console.log('Respuesta del backend:', response.data);
       navigate('/homepage');
     } catch (error: any) {
