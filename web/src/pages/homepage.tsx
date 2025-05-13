@@ -1,30 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-type Carrera =
-  | 'Ingeniería de Sistemas'
-  | 'Contaduría'
-  | 'Administración de Empresas'
-  | 'Derecho';
+type Carrera = 'Ingeniería de Sistemas' | 'Contaduría' | 'Administración de Empresas' | 'Derecho';
 
-const ofertas: Record<Carrera, string[]> = {
-  'Ingeniería de Sistemas': [
-    'Desarrollador Frontend - TechCompany',
-    'Practicante QA - StartupX',
-  ],
-  'Contaduría': [
-    'Asistente contable - Firmax',
-    'Pasante en auditoría - Contadores Unidos',
-  ],
-  'Administración de Empresas': [
-    'Analista junior - Compañía Z',
-    'Practicante en logística - Transporte S.A.',
-  ],
-  'Derecho': [
-    'Pasante jurídico - Bufete López',
-    'Asesor legal junior - JurisConsultores',
-  ],
+type Oferta = {
+  id: number;
+  title: string;
+  description: string;
+  career: Carrera;
 };
 
 const Navbar = () => (
@@ -41,19 +25,39 @@ const Navbar = () => (
     </div>
   </nav>
 );
-//crea
+
 const Homepage = () => {
   const [selectedCareer, setSelectedCareer] = useState<Carrera>('Ingeniería de Sistemas');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [career, setCareer] = useState<Carrera>('Ingeniería de Sistemas');
+  const [ofertas, setOfertas] = useState<Oferta[]>([]);
 
-  const carreras = Object.keys(ofertas) as Carrera[];
+  const carreras = ['Ingeniería de Sistemas', 'Contaduría', 'Administración de Empresas', 'Derecho'];
+
+  // Cargar ofertas desde el backend
+  useEffect(() => {
+    const fetchOfertas = async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/api/offers');
+        setOfertas(res.data);
+      } catch (error) {
+        console.error('Error al cargar ofertas:', error);
+      }
+    };
+    fetchOfertas();
+  }, []);
 
   const handleCrearOferta = async (e: React.FormEvent) => {
     e.preventDefault();
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      alert('No se encontró el token de autenticación. Por favor, inicie sesión.');
+      return;
+    }
+
     try {
-      const token = localStorage.getItem('token');
       const response = await axios.post(
         'http://localhost:3000/api/offers/create',
         { title, description, career },
@@ -63,10 +67,14 @@ const Homepage = () => {
           },
         }
       );
+      
       alert(response.data.message);
       setTitle('');
       setDescription('');
       setCareer('Ingeniería de Sistemas');
+
+      // Actualizar ofertas con la nueva oferta creada
+      setOfertas(prev => [...prev, response.data.offer]); // Usamos el estado anterior para evitar problemas de sincronización
     } catch (error: any) {
       alert(error.response?.data?.error || 'Error al crear oferta');
     }
@@ -87,7 +95,7 @@ const Homepage = () => {
           {carreras.map((carrera) => (
             <button
               key={carrera}
-              onClick={() => setSelectedCareer(carrera)}
+              onClick={() => setSelectedCareer(carrera as Carrera)} // Asegurando que el valor es de tipo Carrera
               className={`px-4 py-2 rounded-md font-semibold text-lg transition duration-300 ease-in-out ${
                 selectedCareer === carrera
                   ? 'bg-indigo-600 text-white'
@@ -104,16 +112,21 @@ const Homepage = () => {
             Ofertas para {selectedCareer}
           </h2>
           <ul className="list-disc pl-5 text-gray-800 space-y-3">
-            {ofertas[selectedCareer].map((oferta, index) => (
-              <li key={index} className="flex items-center gap-2">
-                <span className="text-indigo-600">💼</span>
-                {oferta}
-              </li>
-            ))}
+            {ofertas
+              .filter((oferta) => oferta.career === selectedCareer)
+              .map((oferta) => (
+                <li key={oferta.id} className="flex items-center gap-2">
+                  <span className="text-indigo-600">💼</span>
+                  <div>
+                    <strong>{oferta.title}</strong><br />
+                    <small>{oferta.description}</small>
+                  </div>
+                </li>
+              ))}
           </ul>
         </div>
       </div>
-      
+
       {/* Formulario para crear oferta */}
       <div className="bg-white p-8 mt-8 rounded shadow-lg max-w-5xl mx-auto">
         <h2 className="text-2xl font-semibold text-indigo-600 mb-4">Crear nueva oferta</h2>
@@ -135,7 +148,7 @@ const Homepage = () => {
           />
           <select
             value={career}
-            onChange={(e) => setCareer(e.target.value as Carrera)}
+            onChange={(e) => setCareer(e.target.value as Carrera)} // Asegurando que el valor es de tipo Carrera
             className="w-full p-2 border rounded"
             required
           >
@@ -151,7 +164,7 @@ const Homepage = () => {
           </button>
         </form>
       </div>
-    </div> 
+    </div>
   );
 };
 
