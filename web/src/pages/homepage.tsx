@@ -49,8 +49,17 @@ const Homepage = () => {
   });
   const [showPostulationForm, setShowPostulationForm] = useState(false);
   const [loading, setLoading] = useState(false); // Indicador de carga
+  const [userRole, setUserRole] = useState<string | null>(null); // Guardar el rol del usuario
 
   const carreras = ['Ingeniería de Sistemas', 'Contaduría', 'Administración de Empresas', 'Derecho'];
+
+  // Verificar el rol del usuario desde el localStorage
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user && user.role) {
+      setUserRole(user.role);  // Guardar el rol del usuario
+    }
+  }, []);
 
   // Cargar ofertas desde el backend
   useEffect(() => {
@@ -177,50 +186,52 @@ const Homepage = () => {
         </div>
       </div>
 
-      {/* Sección de Crear Oferta */}
-      <div className="bg-white p-8 mt-8 rounded shadow-lg max-w-5xl mx-auto">
-        <h2 className="text-2xl font-semibold text-indigo-600 mb-4 text-center">Crear nueva oferta 📝</h2>
-        <form onSubmit={handleCrearOferta} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Título de la oferta"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-2 border rounded"
-            required
-            tabIndex={0}
-            aria-label="Título de la oferta"
-          />
-          <textarea
-            placeholder="Descripción"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full p-2 border rounded"
-            required
-            tabIndex={0}
-            aria-label="Descripción de la oferta"
-          />
-          <select
-            value={career}
-            onChange={(e) => setCareer(e.target.value as Carrera)}
-            className="w-full p-2 border rounded"
-            required
-            tabIndex={0}
-            aria-label="Selecciona la carrera"
-          >
-            {carreras.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-          <button
-            type="submit"
-            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
-            aria-label="Publicar oferta"
-          >
-            Publicar oferta
-          </button>
-        </form>
-      </div>
+      {/* Sección de Crear Oferta - Solo visible para admins */}
+      {userRole === 'admin' && (
+        <div className="bg-white p-8 mt-8 rounded shadow-lg max-w-5xl mx-auto">
+          <h2 className="text-2xl font-semibold text-indigo-600 mb-4 text-center">Crear nueva oferta 📝</h2>
+          <form onSubmit={handleCrearOferta} className="space-y-4">
+            <input
+              type="text"
+              placeholder="Título de la oferta"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full p-2 border rounded"
+              required
+              tabIndex={0}
+              aria-label="Título de la oferta"
+            />
+            <textarea
+              placeholder="Descripción"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full p-2 border rounded"
+              required
+              tabIndex={0}
+              aria-label="Descripción de la oferta"
+            />
+            <select
+              value={career}
+              onChange={(e) => setCareer(e.target.value as Carrera)}
+              className="w-full p-2 border rounded"
+              required
+              tabIndex={0}
+              aria-label="Selecciona la carrera"
+            >
+              {carreras.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+            <button
+              type="submit"
+              className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+              aria-label="Publicar oferta"
+            >
+              Publicar oferta
+            </button>
+          </form>
+        </div>
+      )}
 
       {/* Formulario de Postulación */}
       {showPostulationForm && (
