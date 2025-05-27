@@ -22,7 +22,7 @@ const ForgotPassword = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-600 mb-1">
               Correo Electrónico
             </label>
             <input
@@ -31,7 +31,7 @@ const ForgotPassword = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-indigo-500 focus:bg-gray-900 focus:ring-2 focus:ring-indigo-900 text-base outline-none text-gray-100 py-2 px-3 transition-colors duration-100"
+              className="w-full bg-white border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 text-base outline-none text-gray-800 py-2 px-3 transition-colors duration-100"
             />
           </div>
 

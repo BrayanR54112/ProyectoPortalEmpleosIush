@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 type Carrera = 'Ingeniería de Sistemas' | 'Contaduría' | 'Administración de Empresas' | 'Derecho';
@@ -18,22 +18,45 @@ type Postulacion = {
   offerId: number;
 };
 
-const Navbar = () => (
-  <nav className="bg-indigo-600 p-4 shadow-md" role="navigation">
-    <div className="max-w-7xl mx-auto flex justify-between items-center">
-      <div className="flex items-center">
-        <Link to="/" className="text-white font-bold text-2xl font-poppins" aria-label="Ir a la página de inicio">
-          Portal de Empleos
-        </Link>
+type Noticia = {
+  id: number;
+  title: string;
+  description: string;
+  date: string;
+  isExpanded?: boolean;
+};
+
+const Navbar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/');
+  };
+
+  return (
+    <nav className="bg-indigo-500 p-4 shadow-md" role="navigation">
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="flex items-center">
+          <Link to="/" className="text-white font-bold text-2xl font-poppins" aria-label="Ir a la página de inicio">
+            Portal de Empleos
+          </Link>
+        </div>
+        <div className="hidden md:flex space-x-6">
+          <Link to="/about" className="text-white hover:text-indigo-200 p-2 bg-indigo-600 rounded-md transition-colors duration-200" aria-label="Ir a la página de sobre nosotros">Sobre Nosotros</Link>
+          <Link to="/contact" className="text-white hover:text-indigo-200 p-2 bg-indigo-600 rounded-md transition-colors duration-200" aria-label="Ir a la página de contacto">Contacto</Link>
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors duration-200"
+          >
+            Cerrar sesión
+          </button>
+        </div>
       </div>
-      <div className="hidden md:flex space-x-6">
-        <Link to="/" className="text-white hover:text-indigo-200" aria-label="Ir a la página de inicio">Inicio</Link>
-        <Link to="/about" className="text-white hover:text-indigo-200" aria-label="Ir a la página de sobre nosotros">Sobre Nosotros</Link>
-        <Link to="/contact" className="text-white hover:text-indigo-200" aria-label="Ir a la página de contacto">Contacto</Link>
-      </div>
-    </div>
-  </nav>
-);
+    </nav>
+  );
+};
 
 const Homepage = () => {
   const [selectedCareer, setSelectedCareer] = useState<Carrera>('Ingeniería de Sistemas');
@@ -51,6 +74,34 @@ const Homepage = () => {
   const [loading, setLoading] = useState(false); // Indicador de carga
   const [userRole, setUserRole] = useState<string | null>(null); // Guardar el rol del usuario
 
+  // Noticias predefinidas
+  const [noticias, setNoticias] = useState<Noticia[]>([
+    {
+      id: 1,
+      title: "Candidatos Órganos Colegiados 2025",
+      description: "Conoce a los candidatos a los distintos órganos colegiados para la elección de representantes 2025 de la Institución Universitaria Salazar y Herrera y no olvides ejercer tu derecho al voto el 21 de mayo.",
+      date: "05 May 2025",
+    },
+    {
+      id: 2,
+      title: "Ceremonia de Graduación del 6 de junio de 2025",
+      description: "Para la Institución Universitaria Salazar y Herrera es un orgullo que nuestros estudiantes estén a punto de culminar una etapa tan importante como lo fue su proceso de formación profesional.",
+      date: "30 Abr 2025",
+    },
+    {
+      id: 3,
+      title: "Beneficios académicos FUNAYA",
+      description: "La Institución Universitaria Salazar y Herrera, a través de Bienestar Institucional, te ofrece la oportunidad de beneficiarte de los programas de la Fundación Acoger y Acompañar (FUNAYA).",
+      date: "11 Abr 2025",
+    },
+    {
+      id: 4,
+      title: "Renovación del Registro Calificado del Programa de Derecho",
+      description: "Ministerio de Educación Nacional de Colombia renueva el registro calificado del programa de Derecho de la Institución Universitaria Salazar y Herrera.",
+      date: "06 Mar 2025",
+    },
+  ]);
+
   const carreras = ['Ingeniería de Sistemas', 'Contaduría', 'Administración de Empresas', 'Derecho'];
 
   // Verificar el rol del usuario desde el localStorage
@@ -66,7 +117,7 @@ const Homepage = () => {
     const fetchOfertas = async () => {
       try {
         const res = await axios.get('http://localhost:3000/api/offers');
-        setOfertas(res.data);
+        setOfertas(res.data);  // Cargar las ofertas de la API
       } catch (error) {
         console.error('Error al cargar ofertas:', error);
       }
@@ -135,6 +186,16 @@ const Homepage = () => {
     }
   };
 
+  const toggleNoticia = (id: number) => {
+    const updatedNoticias = noticias.map((noticia) => {
+      if (noticia.id === id) {
+        return { ...noticia, isExpanded: !noticia.isExpanded };
+      }
+      return noticia;
+    });
+    setNoticias(updatedNoticias);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-10 font-poppins">
       <Navbar />
@@ -168,19 +229,20 @@ const Homepage = () => {
           {ofertas
             .filter((oferta) => oferta.career === selectedCareer)
             .map((oferta) => (
-              <div key={oferta.id} className="border rounded-lg shadow-lg p-4 bg-white">
+              <div key={oferta.id} className="border rounded-lg shadow-lg p-4 bg-white flex flex-col justify-between">
                 <strong>{oferta.title}</strong><br />
                 <small>{oferta.description}</small><br />
-                <button
-                  onClick={() => {
-                    setPostulacion((prev) => ({ ...prev, offerId: oferta.id }));
-                    setShowPostulationForm(true);
-                  }}
-                  className="bg-indigo-600 text-white px-4 py-2 rounded mt-2"
-                  aria-label={`Postularse a la oferta ${oferta.title}`}
-                >
-                  Postularse
-                </button>
+                <div className="mt-auto">
+                  <button
+                    onClick={() => {
+                      setPostulacion((prev) => ({ ...prev, offerId: oferta.id }));
+                      setShowPostulationForm(true);
+                    }}
+                    className="bg-indigo-600 text-white px-4 py-2 rounded mt-2 w-full hover:scale-105 transition"
+                  >
+                    Postularse
+                  </button>
+                </div>
               </div>
             ))}
         </div>
@@ -232,6 +294,46 @@ const Homepage = () => {
           </form>
         </div>
       )}
+
+      {/* Sección de Noticias */}
+      <div className="bg-white p-8 mt-12 rounded shadow-lg max-w-5xl mx-auto">
+        <h2 className="text-2xl font-semibold text-indigo-600 mb-4 text-center">Últimas Noticias 📰</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+          {noticias.map((noticia) => (
+            <div key={noticia.id} className="border rounded-lg shadow-lg p-4 bg-white">
+              <strong>{noticia.title}</strong><br />
+              <small>{noticia.date}</small><br />
+              <p>{noticia.description.slice(0, 100)}...</p>
+              <button
+                onClick={() => toggleNoticia(noticia.id)}
+                className="bg-indigo-600 text-white px-4 py-2 rounded mt-2 w-full hover:scale-105 transition"
+              >
+                {noticia.isExpanded ? 'Ver menos' : 'Ver más'}
+              </button>
+              {noticia.isExpanded && <p className="mt-4">{noticia.description}</p>}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Sección de Preguntas Frecuentes */}
+      <div className="bg-gray-200 p-8 mt-12 rounded shadow-lg max-w-5xl mx-auto">
+        <h2 className="text-2xl font-semibold text-indigo-600 mb-4 text-center">Preguntas Frecuentes (FAQ) ❓</h2>
+        <div className="space-y-4">
+          <div>
+            <strong>1. ¿Cómo me postulo a una oferta?</strong>
+            <p>Para postularte a una oferta, solo haz clic en el botón "Postularse" y completa el formulario con tu información y CV.</p>
+          </div>
+          <div>
+            <strong>2. ¿Necesito crear una cuenta para postularme?</strong>
+            <p>Sí, necesitas registrarte para poder postularte a las ofertas disponibles.</p>
+          </div>
+          <div>
+            <strong>3. ¿Cómo puedo crear una oferta de empleo?</strong>
+            <p>Si eres administrador, podrás crear ofertas desde la sección "Crear nueva oferta" ubicada en la página principal.</p>
+          </div>
+        </div>
+      </div>
 
       {/* Formulario de Postulación */}
       {showPostulationForm && (
